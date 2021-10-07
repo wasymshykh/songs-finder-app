@@ -1,0 +1,7 @@
+{
+    "require": {
+        "jwilsson/spotify-web-api-php": "^5.0",
+        "phpmailer/phpmailer": "^6.5",
+        "ramsey/uuid": "^4.2"
+    }
+}

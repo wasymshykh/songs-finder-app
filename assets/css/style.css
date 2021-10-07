@@ -1,0 +1,112 @@
+html {
+    font-size: 14px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+
+    background-image: radial-gradient(farthest-corner at 40px 40px, #f35 0%, #43e 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    min-height: 100vh;
+}
+
+/* 
+    Bootstrap Default Customized
+*/
+
+.card {
+    background-color: transparent;
+    background-image: radial-gradient(farthest-corner at 30% 40%, rgba(27, 65, 120, 0.6), rgba(27, 65, 120, 0.8), rgba(126, 14, 122, 0.6));
+    border: 1px solid rgb(77 61 120);
+}
+
+.card-header {
+    background-color: transparent;
+    padding: 1.2rem 1rem;
+}
+
+.form-control {
+    background-color: transparent;
+    background-image: radial-gradient(farthest-corner at 10% 10%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
+    transition: 0.2s all;
+}
+
+.form-control:disabled, .form-control[readonly] {
+    opacity: 0.4;
+}
+
+.btn {
+    border-radius: 5px;
+    padding: .4rem 1.2rem;
+}
+
+.btn-primary {
+    background-image: radial-gradient(farthest-corner at 0px 0px, #f35 0%, #be15a2 100%);
+    border-color: rgba(126, 14, 122, 0.6);
+    font-weight: 700;
+    background-color: #be15a2;
+    transition: 0.3s all;
+    outline: none;
+}
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus {
+    background-image: none;
+    border-color: rgba(126, 14, 122, 0.6);
+    background-color: #f35;
+}
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:active:focus {
+    box-shadow: none;
+}
+.btn-primary:hover {
+    transform: scale(1.1);
+}
+.btn-primary:active:focus {
+    transform: translateY(0.125rem);
+}
+
+/* 
+    Custom Styles
+*/
+
+/* Submit Loader */
+.submit-loader-btn {
+    position: relative;
+    display: inline-block;
+}
+.submit-loader-btn:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(rgba(0,0,0,0.2), transparent);
+    opacity: 0.5;
+    z-index: 1;
+    border-radius: 5px;
+    opacity: 0;
+    pointer-events: none;
+}
+.loader-icon {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+}
+.submit-loader-btn.active .loader-btn {
+    opacity: 0.6;
+}
+.submit-loader-btn.active .loader-icon {
+    opacity: 1;
+}
+.submit-loader-btn.active:before {
+    opacity: 1;
+    pointer-events: all;
+}
+
