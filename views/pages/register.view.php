@@ -4,7 +4,7 @@
         <div class="col-lg-6 offset-lg-3">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="m-0 text-center font-weight-bold">Login</h5>
+                    <h5 class="m-0 text-center">Register</h5>
                 </div>
                 <div class="card-body row">
                 
@@ -27,14 +27,22 @@
                             </div>
                         <?php endif; ?>
 
-                        <form action="<?=href('login')?>" class="row" method="post">                            
+                        <form action="<?=href('register')?>" class="row" method="post">                            
                             <div class="col-md-12">
+                                <label for="name" class="form-label">Your Name</label>
+                                <input type="text" name="name" id="name" placeholder="Name" class="form-control" value="<?=$_POST['name']??''?>" required>
+                            </div>
+                            <div class="col-md-12 mt-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" name="email" id="email" placeholder="Email" class="form-control" value="<?=$_POST['email']??''?>" required>
                             </div>
-                            <div class="col-md-12 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" name="password" id="password" placeholder="Password" class="form-control" value="<?=$_POST['password']??''?>" required>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="repassword" class="form-label">Confirm Password</label>
+                                <input type="password" name="repassword" id="repassword" placeholder="Retype Password" class="form-control" value="<?=$_POST['repassword']??''?>" required>
                             </div>
 
                             <div class="col-md-12 mt-4">
@@ -42,7 +50,7 @@
                                     <div class="loader-icon">
                                         <i class="fas fa-spinner fa-spin"></i>
                                     </div>
-                                    <button type="submit" class="loader-btn btn btn-primary">Login</button>
+                                    <button type="submit" class="loader-btn btn btn-primary">Create Account</button>
                                 </div>
                             </div>
                         </form>
@@ -50,8 +58,7 @@
 
                     <div class="col-md-12 mt-2">
                         <hr>
-                        <p>new to platform? <a href="<?=href('register')?>" class="text-white">create an account</a></p>
-                        <p>forgot password? <a href="<?=href('forgot')?>" class="text-white">reset it</a></p>
+                        <p>already have account? <a href="<?=href('login')?>" class="text-white">login</a></p>
                     </div>
 
                 </div>
@@ -81,9 +88,8 @@
             active_loader(t.find('button[type="submit"]'));
             
             form_state.submit = true;
-            setTimeout(function () { t.submit(); }, <?=$settings->fetch('login_submit_timeout')?>);
+            setTimeout(function () { t.submit(); }, <?=$settings->fetch('register_submit_timeout')?>);
         }
     });
 
 </script>
-
