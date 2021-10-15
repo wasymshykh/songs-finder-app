@@ -10,6 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
 
+    <?php if (isset($css_before) && !empty($css_before)): ?>
+        <?php foreach ($css_before as $css): ?>
+            <?=$css?>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
     <?=css_link('bootstrap.min', true)?>
     <?=css_link('style', true)?>
 

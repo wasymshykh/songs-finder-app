@@ -56,9 +56,13 @@ class Services
         return ['status' => false, 'type' => 'empty', 'data' => 'Invalid service name.'];
     }
 
-    public function get_access_token_of_service ($service_id)
+    public function get_access_token_of_service ($service_id, $join = false)
     {
-        $q = "SELECT * FROM `{$this->table_access}` WHERE `atoken_mservice_id` = :i AND `atoken_expired` = 'N'";
+        if ($join !== false) {
+            $q = "SELECT * FROM `{$this->table_access}` JOIN `{$this->table_services}` ON `atoken_mservice_id` = `mservice_id` WHERE `atoken_mservice_id` = :i AND `atoken_expired` = 'N'";
+        } else {
+            $q = "SELECT * FROM `{$this->table_access}` WHERE `atoken_mservice_id` = :i AND `atoken_expired` = 'N'";
+        }
         $s = $this->db->prepare($q);
         $s->bindParam(":i", $service_id);
         if (!$s->execute()) {
