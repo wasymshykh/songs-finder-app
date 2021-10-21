@@ -39,7 +39,7 @@ if (isset($_POST) && !empty($_POST)) {
             
             $user_repassword = normal_text($_POST['repassword']);
 
-            if ($user_password !== $user_password) {
+            if ($user_password !== $user_repassword) {
                 $errors[] = "Passwords doesn't match, type again";
             }
 

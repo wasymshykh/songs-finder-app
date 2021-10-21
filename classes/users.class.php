@@ -79,6 +79,18 @@ class Users
         return ['status' => true, 'user' => $user];
     }
 
+    public function check_user_status ($status)
+    {
+        if ($status === 'U') {
+            return ['status' => false, 'data' => 'Account is not verified.'];
+        }
+        if ($status === 'B') {
+            return ['status' => false, 'data' => 'Account is banned.'];
+        }
+
+        return ['status' => true];
+    }
+
     public function set_session ($user_id)
     {
         $_SESSION['logged'] = true;
@@ -98,6 +110,62 @@ class Users
         }
         
         return ['status' => true];
+    }
+
+    public function logout ()
+    {
+        if (isset($_SESSION['logged'])) {
+            unset($_SESSION['logged']);
+        }
+        if (isset($_SESSION['logged_user'])) {
+            unset($_SESSION['logged_user']);
+        }
+        return true;
+    }
+
+    public function get_logged_user ()
+    {
+        $user = $this->get_user_by('user_id', $_SESSION['logged_user']);
+        if (!$user['status']) {
+            return ['status' => false, 'data' => 'Unable to find user details'];
+        }
+
+        $user = $user['data'];
+
+        $status = $this->check_user_status($user['user_status']); 
+        if (!$status['status']) {
+            return $status;
+        }
+
+        return ['status' => true, 'data' => $user];
+    }
+
+    public function update ($changes, $user_id)
+    {
+        $p = "";
+        $data = [];
+        foreach ($changes as $c => $v) {
+            if (!empty($p)) {
+                $p .= ", ";
+            }
+            $p .= "`$c` = :$c";
+            $data[":$c"] = $v;
+        }
+
+        $data[":user_id"] = $user_id;
+
+        $q = "UPDATE `users` SET $p WHERE `user_id` = :user_id";
+
+        $s = $this->db->prepare($q);
+
+        if (!$s->execute($data)) {
+            $failure = $this->class_name.'.update - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode($s->errorInfo()));
+            return ['status' => false, 'type' => 'query', 'data' => $failure];
+        }
+        
+        return ['status' => true];
+
     }
 
 }

@@ -24,3 +24,32 @@
     
 </head>
 <body>
+
+<?php if ($logged): ?>
+
+    <div class="container-fluid bg-dark">
+
+        <div class="container-md py-3">
+            <div class="navbar navbar-expand-lg navbar-dark row align-items-center">
+                <div class="col">
+                    <a class="navbar-brand" href="<?=URL?>"><?=$settings->fetch('site_name')?></a>
+                </div>
+                <div class="col-auto">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="<?=href('playlists')?>" class="nav-link"><i class="fas fa-music pe-1"></i> Playlists</a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a href="<?=href('settings')?>" class="nav-link"><i class="fas fa-cog pe-1"></i> Settings</a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a href="<?=href('logout')?>" class="nav-link">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<?php endif; ?>

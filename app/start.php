@@ -62,6 +62,13 @@
     }
 
     $logged = false;
-    if (isset($_SESSION['logged']) && !empty($_SESSION['logged']) && $_SESSION['logged'] === true) {
+    if (isset($_SESSION['logged']) && !empty($_SESSION['logged']) && $_SESSION['logged'] === true) {        
+        $logged_user = $U->get_logged_user();
+        if (!$logged_user['status']) {
+            $_SESSION['message'] = ['type' => 'error', 'data' => $logged_user['data']];
+            $U->logout();
+            move('login.php');
+        }
         $logged = true;
+        $logged_user = $logged_user['data'];
     }

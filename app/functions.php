@@ -74,3 +74,10 @@ function end_response ($status_code, $message)
     echo json_encode(['status_code' => $status_code, 'message' => $message]);
     die();
 }
+
+function youtube_duration_format ($stamp)
+{
+    $formated_stamp = str_replace(array("PT","M","S"), array("",":",""),$stamp);
+    $exploded_string = explode(":",$formated_stamp);
+    return sprintf("%02d", $exploded_string[0]).":".sprintf("%02d", $exploded_string[1]);
+}

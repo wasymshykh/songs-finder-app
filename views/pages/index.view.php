@@ -56,11 +56,13 @@
                                     <div class="col-sm-8 search-result-text">
                                         <h5><?=$song['song_name']?></h5>
                                         <p><?=$song['artist_name']?></p>
-                                        <p class="search-result-album"><strong>album</strong> <?=$song['album_name']?></p>
+                                        <?php if (!empty($song['album_name'])): ?>
+                                            <p class="search-result-album"><strong>album</strong> <?=$song['album_name']?></p>
+                                        <?php endif; ?>
 
                                         <div class="search-result-source">
                                             <div class="search-result-source-icon">
-                                                <img src="assets/img/logos/spotify_icon.svg" alt="spotify" data-bs-toggle="tooltip" data-bs-placement="bottom" title="spotify">
+                                                <img src="<?=$song['service_icon']?>" alt="<?=$song['service_name']?>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<?=$song['service_name']?>">
                                             </div>
                                         </div>
                                     </div>
