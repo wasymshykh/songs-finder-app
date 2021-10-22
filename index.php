@@ -9,11 +9,14 @@ if (!$logged) {
 
 $services = new Services($db);
 $finder = new Finder($db);
+$caches = new Caches($db);
+$P = new Playlists($db);
 
 $errors = [];
 
 if (isset($_POST) && !empty($_POST)) {
 
+    $songs = [];
     
     $_service = $services->get_service_by_name('Spotify');
     if ($_service['status']) {
@@ -24,11 +27,10 @@ if (isset($_POST) && !empty($_POST)) {
             if ($token['status']) {
                 $token = $token['data'];
                 
-                $songs = $finder->spotify_finder($_POST['search'], $token['atoken_token'], ['name' => $token['mservice_name'], 'icon' => $token['mservice_icon']]);
-                if ($songs['status']) {
-                    $songs = $songs['songs'];
+                $results = $finder->spotify_finder($_POST['search'], $token['atoken_token'], service_simple_data_array($_service));
+                if ($results['status']) {
+                    $songs = array_merge($songs, $results['songs']);
                 } else {
-                    $songs = [];
                     $errors[] = "Unable to find songs";
                 }
             }
@@ -39,18 +41,17 @@ if (isset($_POST) && !empty($_POST)) {
     } else {
         $errors[] = "Spotify service not found";
     }
-
+    
     $_service = $services->get_service_by_name('Deezer');
     if ($_service['status']) {
         $_service = $_service['data'];
 
         if ($_service['mservice_status'] === 'Y') {
 
-            $songs = $finder->deezer_finder($_POST['search'], ['name' => $_service['mservice_name'], 'icon' => $_service['mservice_icon']]);
-            if ($songs['status']) {
-                $songs = $songs['songs'];
+            $results = $finder->deezer_finder($_POST['search'], service_simple_data_array($_service));
+            if ($results['status']) {
+                $songs = array_merge($songs, $results['songs']);
             } else {
-                $songs = [];
                 $errors[] = "Unable to find songs";
             }
 
@@ -68,11 +69,10 @@ if (isset($_POST) && !empty($_POST)) {
 
         if ($_service['mservice_status'] === 'Y') {
 
-            $songs = $finder->youtube_finder($_POST['search'], $_service['mservice_secret'], ['name' => $_service['mservice_name'], 'icon' => $_service['mservice_icon']]);
-            if ($songs['status']) {
-                $songs = $songs['songs'];
+            $results = $finder->youtube_finder($_POST['search'], $_service['mservice_secret'], service_simple_data_array($_service));
+            if ($results['status']) {
+                $songs = array_merge($songs, $results['songs']);
             } else {
-                $songs = [];
                 $errors[] = "Unable to find songs";
             }
 
@@ -84,11 +84,29 @@ if (isset($_POST) && !empty($_POST)) {
         $errors[] = "Youtube service not found";
     }
 
+    
+    if (empty($errors)) {
+        $result = $caches->add_search_results($songs);
+        if (!$result['status']) {
+            $errors[] = "Unable to add to cache";
+        }
+    }
 
+}
+
+$playlists = [];
+
+$_playlists = $P->get_playlists_by_user($logged_user['user_id']);
+if ($_playlists['status']) {
+    $playlists = $_playlists['data'];
 }
 
 $css_before = [
     css_link('calamansi.min', true)
+];
+
+$js_after = [
+    js_link('index', true)
 ];
 
 $popper_js = true;

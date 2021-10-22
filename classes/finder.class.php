@@ -20,7 +20,7 @@ class Finder
         $api->setAccessToken($access_token);
 
         try {
-            $results = $api->search($query, ['track']);
+            $results = $api->search($query, ['track'], ['limit' => $service['limit']]);
             // convert $results to associative array
             $results = json_decode(json_encode($results), true);
 
@@ -42,25 +42,22 @@ class Finder
                 if (empty($track['preview_url'])) { continue; }
                 // For future: we can check cache for the song preview url
 
-                $artists_names = "";
-                foreach ($track['album']['artists'] as $artist) {
-                    if (!empty($artists_names)) { $artists_names .= ", "; }
-
-                    $artists_names .= $artist['name'];
-                } 
-
                 $album_image = $track['album']['images'][count($track['album']['images']) - 1]['url'];
 
                 $duration_ms = $track['duration_ms'];
                 $song_duration = str_pad(floor($duration_ms/60000), 2, '0', STR_PAD_LEFT).':'.str_pad(floor(($duration_ms%60000)/1000), 2, '0', STR_PAD_LEFT);
 
                 $songs[] = [
-                    'artist_name' => $artists_names,
+                    'artist_id' => $track['album']['artists'][0]['id'],
+                    'artist_name' => $track['album']['artists'][0]['name'],
+                    'album_id' => $track['album']['id'],
                     'album_name' => $track['album']['name'],
                     'album_image' => $album_image,
+                    'song_id' => $track['id'],
                     'song_name' => $track['name'],
                     'song_duration' => $song_duration,
                     'song_preview' => $track['preview_url'],
+                    'service_id' => $service['id'],
                     'service_name' => $service['name'],
                     'service_icon' => $service['icon']
                 ];
@@ -84,7 +81,7 @@ class Finder
 
         try {
 
-            $results = $api->searchTrack($query);
+            $results = $api->searchTrack($query, $service['limit']);
 
             $results = json_decode(json_encode($results), true);
 
@@ -97,12 +94,16 @@ class Finder
                 $song_duration = str_pad(floor($duration_s/60), 2, '0', STR_PAD_LEFT).':'.str_pad(floor(($duration_s%60)), 2, '0', STR_PAD_LEFT);
 
                 $songs[] = [
+                    'artist_id' => $track['artist']['id'],
                     'artist_name' => $track['artist']['name'],
+                    'album_id' => $track['album']['id'],
                     'album_name' => $track['album']['title'],
                     'album_image' => $track['album']['cover_small'],
+                    'song_id' => $track['id'],
                     'song_name' => $track['title'],
                     'song_duration' => $song_duration,
                     'song_preview' => $track['preview'],
+                    'service_id' => $service['id'],
                     'service_name' => $service['name'],
                     'service_icon' => $service['icon']
                 ];
@@ -122,7 +123,7 @@ class Finder
     {
         $youtube = new Madcoda\Youtube\Youtube(['key' => $key]);
 
-        $params = ['q' => $query, 'type' => 'video', 'part' => 'id', 'maxResult' => 5, 'videoCategoryId' => 10, 'videoLicense' => 'youtube'];        
+        $params = ['q' => $query, 'type' => 'video', 'part' => 'id', 'maxResult' => $service['limit'], 'videoCategoryId' => 10, 'videoLicense' => 'youtube'];        
         $results = $youtube->searchAdvanced($params);
         $results = json_decode(json_encode($results), true);
 
@@ -147,12 +148,16 @@ class Finder
                 $songs = [];
                 foreach ($filtered_results as $video) {
                     $songs[] = [
+                        'artist_id' => $video['snippet']['channelId'],
                         'artist_name' => $video['snippet']['channelTitle'],
+                        'album_id' => '',
                         'album_name' => '',
                         'album_image' => $video['snippet']['thumbnails']['default']['url'],
+                        'song_id' => $video['id'],
                         'song_name' => $video['snippet']['title'],
                         'song_duration' => youtube_duration_format($video['contentDetails']['duration']),
                         'song_preview' => '',
+                        'service_id' => $service['id'],
                         'service_name' => $service['name'],
                         'service_icon' => $service['icon']
                     ];

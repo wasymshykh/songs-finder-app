@@ -82,7 +82,6 @@ if (isset($_POST) && !empty($_POST)) {
             
             $check = $U->update($changes, $logged_user['user_id']);
             if ($check['status']) {
-                $user = $check['user'];
                 $_SESSION['message'] = ['type' => 'success', 'data' => 'Password is successfully updated.'];
                 move('settings.php');
             } else {

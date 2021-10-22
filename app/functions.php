@@ -68,8 +68,11 @@ function js_link ($file, $tag = false)
     return $link;
 }
 
-function end_response ($status_code, $message)
+function end_response ($status_code, $message, $header_json = false)
 {
+    if ($header_json) {
+        header('Content-Type: application/json; charset=utf-8');
+    }
     http_response_code($status_code);
     echo json_encode(['status_code' => $status_code, 'message' => $message]);
     die();
@@ -80,4 +83,9 @@ function youtube_duration_format ($stamp)
     $formated_stamp = str_replace(array("PT","M","S"), array("",":",""),$stamp);
     $exploded_string = explode(":",$formated_stamp);
     return sprintf("%02d", $exploded_string[0]).":".sprintf("%02d", $exploded_string[1]);
+}
+
+function service_simple_data_array ($service)
+{
+    return ['id' => $service['mservice_id'], 'name' => $service['mservice_name'], 'icon' => $service['mservice_icon'], 'limit' =>  $service['mservice_results_limit']];
 }

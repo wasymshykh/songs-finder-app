@@ -119,6 +119,7 @@ body {
     border-radius: 4px;
 }
 
+.search-result-img-no,
 .search-result-img {
     width: 100%;
     display: flex;
@@ -128,6 +129,7 @@ body {
     cursor: pointer;
 }
 
+.search-result-img-no img,
 .search-result-img img {
     width: 100%;
     height: auto;
@@ -211,7 +213,6 @@ p.search-result-album {
     display: block;
 }
 
-
 .page-audio-player {
     width: 98%;
     max-width: 800px;
@@ -221,3 +222,88 @@ p.search-result-album {
     transform: translateX(-50%);
 }
 
+.playlist-select-radio-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8em;
+}
+
+.playlist-select-radio {
+    display: flex;
+}
+
+.playlist-select-radio input {
+    display: none;
+}
+
+.playlist-select-radio label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0.2em 1em;
+    font-size: 0.9em;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,.125);
+    cursor: pointer;
+}
+
+.playlist-select-checked,
+.playlist-select-unchecked {
+    font-size: 1em;
+    margin-right: 0.5em;
+}
+
+.playlist-select-radio input ~ label .playlist-select-checked {
+    display: none;
+}
+.playlist-select-radio input:checked ~ label .playlist-select-checked {
+    display: block;
+}
+.playlist-select-radio input:checked ~ label .playlist-select-unchecked {
+    display: none;
+}
+
+.playlist-select-radio input:checked ~ label {
+    background-image: radial-gradient(farthest-corner at 0px 0px, #f35 0%, #be15a2 100%);
+}
+
+.toast-success,
+.toast-error {
+    position: fixed;
+    z-index: 10000;
+    right: 1em;
+    top: 1em;
+    padding: 1em;
+}
+.toast-error {
+    background-color: #f35;
+}
+.toast-success {
+    background-color: #11ab4f;
+}
+
+.toast-success p,
+.toast-error p {
+    margin-bottom: 0;
+}
+
+.playlist-loader {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    left: 0;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.playlist-box h5 {
+    margin-bottom: 0;
+}
+.playlist-box p {
+    font-size: 0.8em;
+    margin-bottom: 0;
+}
