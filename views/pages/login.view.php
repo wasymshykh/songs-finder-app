@@ -51,7 +51,6 @@
                     <div class="col-md-12 mt-2">
                         <hr>
                         <p>new to platform? <a href="<?=href('register')?>" class="text-white">create an account</a></p>
-                        <p>forgot password? <a href="<?=href('forgot')?>" class="text-white">reset it</a></p>
                     </div>
 
                 </div>

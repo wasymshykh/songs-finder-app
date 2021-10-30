@@ -119,6 +119,31 @@ class Finder
 
     }
 
+    public function deezer_song_finder ($artist_name, $track_name, $limit) {
+
+        $client = new wasymshykh\DeezerAPI\DeezerAPIClient();
+        $api = new wasymshykh\DeezerAPI\DeezerPublicAPI($client);
+        
+        try {
+            $query = 'artist:"'.normal_text($artist_name).'" track:"'.normal_text($track_name).'"';
+            $results = $api->search($query, $limit);
+            $results = json_decode(json_encode($results), true);
+            $results = $results['data'];
+            if (count($results) < 1) {
+                return ['status' => false];
+            }
+            
+            return ['status' => true, 'track_id' => $results[0]['id']];
+
+        } catch (Exception $e) {
+            $failure = $this->class_name.'.deezer_song_finder - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode(['message' => $e->getMessage(), 'data' => [$artist_name, $track_name, $limit]]));
+            return ['status' => false, 'type' => 'error'];
+        }
+
+    }
+
+
     public function youtube_finder ($query, $key, $service)
     {
         $youtube = new Madcoda\Youtube\Youtube(['key' => $key]);

@@ -1,8 +1,13 @@
 
-
 <?php if(isset($success) && !empty($success)): ?>
     <div class="alert alert-success">
         <?=$success?>
+    </div>
+<?php endif; ?>
+
+<?php if(isset($error) && !empty($error)): ?>
+    <div class="alert alert-danger">
+        <?=$error?>
     </div>
 <?php endif; ?>
 
