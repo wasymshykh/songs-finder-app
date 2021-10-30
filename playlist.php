@@ -45,6 +45,10 @@ foreach ($playlist_tracks as $artist) {
 }
 
 
+$css_before = [
+    css_link('calamansi.min', true)
+];
+
 $js_after = [
     js_link('playlist', true)
 ];

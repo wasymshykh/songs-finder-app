@@ -73,6 +73,33 @@ class Finder
         }
 
     }
+    
+
+    public function spotify_song_finder ($artist_name, $track_name, $access_token, $limit)
+    {
+        $api = new SpotifyWebAPI\SpotifyWebAPI();
+        $api->setAccessToken($access_token);
+
+        try {
+            $query = normal_text($artist_name).' track:'. normal_text($track_name);
+            $results = $api->search($query, ['track'], ['limit' => $limit]);
+            // convert $results to associative array
+            $results = json_decode(json_encode($results), true);
+
+            
+            if (count($results['tracks']['items']) < 1) {
+                return ['status' => false];
+            }
+
+            return ['status' => true, 'track_id' => $results['tracks']['items'][0]['id']];
+
+        } catch (Exception $e) {
+            $failure = $this->class_name.'.spotify_song_finder - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode(['message' => $e->getMessage(), 'track' => $track_name, 'artist' => $artist_name, 'token' => $access_token]));
+            return ['status' => false, 'type' => 'error'];
+        }
+
+    }
 
     public function deezer_finder ($query, $service)
     {

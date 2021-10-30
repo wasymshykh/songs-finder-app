@@ -27,7 +27,7 @@
 
 <?php if ($logged): ?>
 
-    <div class="container-fluid bg-dark">
+    <div class="container-fluid header-bg">
 
         <div class="container-md py-3">
             <div class="navbar navbar-expand-lg navbar-dark row align-items-center">

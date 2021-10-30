@@ -55,7 +55,7 @@
         <?php foreach ($playlists as $playlist): ?>
             <div class="col-lg-5 mt-4">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header playlist-header">
                         <div class="row align-items-center">
                             <div class="col">
                                 <?=$playlist['playlist_name']?>
@@ -77,7 +77,7 @@
                                 <p>Artists</p>
                             </div>
                             <div class="col-lg-4">
-                                <p class="mb-1">created on</p>
+                                <p class="mb-0">created on</p>
                                 <h5><?=normal_date($playlist['playlist_created'], 'dS F')?></h5>
                             </div>
                         </div>

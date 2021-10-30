@@ -47,6 +47,19 @@ foreach ($playlist_tracks as $track) {
     }
 }
 
+// checking if the spotify access code is available 
+$token = $S->get_access_token_of_service($service['mservice_id'], false);
+if ($token['status']) {
+    $access_code = $token['data'];
+} else {
+    // creating log for no access code available
+    $logs = new Logs((new DB())->connect());
+    $logs->create("export_spotify.php", "Unable to get access code from database", json_encode(['message' => "Unable to get access code from database during spotify export attempt", 'service_name' => $service_name, 'playlist_id' => $playlist_id]));
+
+    $_SESSION['message'] = ['type' => 'error', 'data' => 'Service token error. Contact administrator.'];
+    move('playlist.php?i='.$playlist['playlist_id']);
+}
+
 // finding songs on platform
 $finder = new Finder($db);
 
@@ -62,7 +75,7 @@ foreach ($other_service as $i => $track) {
         'export_track_id' => $track['track_id'], 'export_mservice_id' => $service['mservice_id'],'export_external_track_id' => NULL, 'export_found' => 'N'
     ];
 
-    $result = $finder->deezer_song_finder($track['artist_name'], $track['track_name'], 1);
+    $result = $finder->spotify_song_finder($track['artist_name'], $track['track_name'], $access_code['atoken_token'], 1);
     if ($result['status']) {
         $other_service[$i]['export']['export_external_track_id'] = $result['track_id'];
         $other_service[$i]['export']['export_found'] = 'Y';
@@ -95,9 +108,22 @@ if (!$result['status']) {
     move('playlist.php?i='.$playlist['playlist_id']);
 }
 
-$redirect_uri = urlencode(URL."/export_deezer_callback.php?i=".$playlist['playlist_id']);
-$app_id = $service['mservice_client'];
-$perms = "manage_library";
-$deezer_url = "https://connect.deezer.com/oauth/auth.php?app_id=$app_id&redirect_uri=$redirect_uri&perms=$perms";
 
-header("location: $deezer_url");
+$redirect_uri = URL."/export_spotify_callback.php";
+$session = new SpotifyWebAPI\Session($service['mservice_client'], $service['mservice_secret'], $redirect_uri);
+$state = $session->generateState();
+$options = [
+    'scope' => [
+        'playlist-modify-public',
+        'playlist-modify-private'
+    ],
+    'state' => $state,
+];
+
+if (!isset($_SESSION['spotify_state']) || !is_array($_SESSION['spotify_state'])) {
+    $_SESSION['spotify_state'] = [];
+}
+$_SESSION['spotify_state'][$state] = ['playlist_id' => $playlist['playlist_id']];
+
+header('Location: ' . $session->getAuthorizeUrl($options));
+die();
