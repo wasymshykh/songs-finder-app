@@ -227,4 +227,44 @@ class Finder
         return ['status' => false, 'type' => 'error'];
     }
 
+    
+    public function youtube_song_finder ($artist_name, $track_name, $key, $limit)
+    {
+        $youtube = new Madcoda\Youtube\Youtube(['key' => $key]);
+
+        $query = $artist_name . ' ' . $track_name;
+        $params = ['q' => $query, 'type' => 'video', 'part' => 'id', 'maxResult' => $limit, 'videoCategoryId' => 10, 'videoLicense' => 'youtube'];        
+        $results = $youtube->searchAdvanced($params);
+        $results = json_decode(json_encode($results), true);
+
+        $videos = [];
+        foreach ($results as $result) {
+            $videos[] = $result['id']['videoId'];
+        }
+
+        if (!empty($videos)) {
+            $results = $youtube->getVideosInfo($videos);
+            $results = json_decode(json_encode($results), true);
+
+            // Only retriving licensed content
+            $filtered_results = [];
+            foreach ($results as $result) {
+                if ($result['contentDetails']['licensedContent'] === true) {
+                    $filtered_results[] = $result;
+                }
+            }
+
+            if (!empty($filtered_results)) {
+                return ['status' => true, 'track_id' => $filtered_results[0]['id']];
+            } else {
+                return ['status' => false, 'type' => 'error', 'data' => 'Unable to find videos'];
+            }
+
+        } else {
+            return ['status' => false, 'type' => 'error', 'data' => 'Unable to find videos'];
+        }
+
+        return ['status' => false, 'type' => 'error'];
+    }
+
 }

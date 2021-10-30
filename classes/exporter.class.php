@@ -62,4 +62,20 @@ class Exporter
         return ['status' => true, 'data' => $s->fetchAll()];
     }
 
+    public function get_export_of_songs_of_service ($in, $service_id)
+    {
+        $q = "SELECT * FROM `{$this->table_name}` WHERE `export_track_id` IN ($in) AND `export_mservice_id` = :s";
+        $s = $this->db->prepare($q);
+        $s->bindParam(":s", $service_id);
+        if (!$s->execute()) {
+            $failure = $this->class_name.'.get_export_of_songs_of_service - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode($s->errorInfo()));
+            return ['status' => false, 'type' => 'query', 'data' => $failure];
+        } 
+        if ($s->rowCount() === 0) {
+            return ['status' => false, 'type' => 'empty'];
+        }
+        return ['status' => true, 'data' => $s->fetchAll()];
+    }
+
 }

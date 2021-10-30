@@ -4,6 +4,7 @@
         "phpmailer/phpmailer": "^6.5",
         "ramsey/uuid": "^4.2",
         "madcoda/php-youtube-api": "^1.2",
-        "wasymshykh/deezer-api-php-wrapper": "^0.1.0"
+        "wasymshykh/deezer-api-php-wrapper": "^0.1.0",
+        "google/apiclient": "^2.11"
     }
 }

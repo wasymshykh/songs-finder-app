@@ -69,7 +69,7 @@ if (isset($_POST) && !empty($_POST)) {
 
         if ($_service['mservice_status'] === 'Y') {
 
-            $results = $finder->youtube_finder($_POST['search'], $_service['mservice_secret'], service_simple_data_array($_service));
+            $results = $finder->youtube_finder($_POST['search'], $_service['mservice_api_key'], service_simple_data_array($_service));
             if ($results['status']) {
                 $songs = array_merge($songs, $results['songs']);
             } else {
