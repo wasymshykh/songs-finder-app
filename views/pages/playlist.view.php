@@ -57,9 +57,13 @@
                                 <span class="ms-2">Export to</span>
                             </small>
 
-                            <a href="<?=href('export_spotify.php?s=Spotify&i='.$playlist['playlist_id'], false)?>" class="btn btn-sm btn-spotify ms-2">Spotify</a>
-                            <a href="<?=href('export_youtube.php?s=Youtube&i='.$playlist['playlist_id'], false)?>" class="btn btn-sm btn-youtube ms-2">Youtube</a>
-                            <a href="<?=href('export_deezer.php?s=Deezer&i='.$playlist['playlist_id'], false)?>" class="btn btn-sm btn-deezer ms-2">Deezer</a>
+                            <?php 
+                                foreach ($services as $service): if ($service['mservice_enable_export'] === 'Y'): 
+                                ?>
+                                <a href="<?=href($service['mservice_export_file'].'?i='.$playlist['playlist_id'], false)?>" class="btn btn-sm btn-<?=strtolower($service['mservice_name'])?> ms-2"><?=$service['mservice_name']?></a>
+                            <?php 
+                                endif; endforeach; 
+                                ?>
                         </div>
                     </div>
                 </div>

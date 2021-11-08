@@ -9,7 +9,7 @@ class Services
     private $table_access;
     private $table_services;
 
-    private $services;
+    public $services;
     
     public function __construct(PDO $db) {
         $this->logs = new Logs((new DB())->connect());

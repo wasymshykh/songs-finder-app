@@ -77,6 +77,41 @@
                         </div>
                         <?php endif; ?>
 
+                        <?php if (!empty($artists)): ?>
+                        <div class="row g-2">
+                            <div class="col-sm-12 mt-4">
+                                <hr>
+                                <h4><i class="fas fa-user-tie me-2"></i> Artists</h4>
+                            </div>
+
+                            <?php foreach ($artists as $song): ?>
+                            <div class="col-md-4">
+                                <div class="row px-2 py-2 m-0 gy-0 gx-2 search-result">
+                                    <div class="col-auto search-artist-img">
+                                        <div class="search-result-img-no">
+                                            <img src="<?=$song['artist_image']?>" alt="<?=$song['artist_name']?>">
+                                        </div>
+                                    </div>
+                                    <div class="col search-result-text">
+                                        <h5><?=$song['artist_name']?></h5>
+                                        <p>Artist</p>
+                                        <?php if (!empty($song['album_name'])): ?>
+                                            <p class="search-result-album"><strong>album</strong> <?=$song['album_name']?></p>
+                                        <?php endif; ?>
+
+                                        <div class="search-result-source">
+                                            <div class="search-result-source-icon">
+                                                <img src="<?=$song['service_icon']?>" alt="<?=$song['service_name']?>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<?=$song['service_name']?>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+
+                        </div>
+                        <?php endif; ?>
+
                     </div>
 
                 </div>

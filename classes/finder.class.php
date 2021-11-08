@@ -20,7 +20,7 @@ class Finder
         $api->setAccessToken($access_token);
 
         try {
-            $results = $api->search($query, ['track'], ['limit' => $service['limit']]);
+            $results = $api->search($query, ['track', 'artist'], ['limit' => $service['limit']]);
             // convert $results to associative array
             $results = json_decode(json_encode($results), true);
 
@@ -34,7 +34,8 @@ class Finder
             ]
             */
 
-            $songs = []; 
+            $songs = [];
+            $artists = [];
 
             foreach ($results['tracks']['items'] as $track) {
 
@@ -64,7 +65,19 @@ class Finder
 
             }
 
-            return ['status' => true, 'songs' => $songs];
+            foreach ($results['artists']['items'] as $artist) {
+                $artist_image = !empty($artist['images']) ? $artist['images'][count($artist['images'])-1]['url'] : URL.'/assets/img/default-avatar.png';
+                $artists[] = [
+                    'artist_id' => $artist['id'],
+                    'artist_name' => $artist['name'],
+                    'artist_image' => $artist_image,
+                    'service_id' => $service['id'],
+                    'service_name' => $service['name'],
+                    'service_icon' => $service['icon']
+                ];
+            }
+
+            return ['status' => true, 'songs' => $songs, 'artists' => $artists];
 
         } catch (Exception $e) {
             $failure = $this->class_name.'.spotify_finder - E.02: Failure';
@@ -86,7 +99,6 @@ class Finder
             // convert $results to associative array
             $results = json_decode(json_encode($results), true);
 
-            
             if (count($results['tracks']['items']) < 1) {
                 return ['status' => false];
             }
@@ -109,16 +121,25 @@ class Finder
         try {
 
             $results = $api->searchTrack($query, $service['limit']);
+            $artist_results = $api->searchArtist($query, $service['limit']);
 
             $results = json_decode(json_encode($results), true);
+            $artist_results = json_decode(json_encode($artist_results), true);
 
             $results = $results['data'];
+            $artist_results = $artist_results['data'];
 
             $songs = []; 
             foreach ($results as $track) {
-
                 $duration_s = $track['duration'];
                 $song_duration = str_pad(floor($duration_s/60), 2, '0', STR_PAD_LEFT).':'.str_pad(floor(($duration_s%60)), 2, '0', STR_PAD_LEFT);
+
+                $parsed_url = parse_url($track['preview']);
+                
+                if (!empty($parsed_url['scheme']) && $parsed_url['scheme'] === 'http') {
+                    file_put_contents(DIR.'/assets/songs/'.$track['id'].".mp3", fopen($track['preview'], 'r'));
+                    $track['preview'] = URL.'/assets/songs/'.$track['id'].".mp3";
+                } 
 
                 $songs[] = [
                     'artist_id' => $track['artist']['id'],
@@ -136,7 +157,20 @@ class Finder
                 ];
             }
 
-            return ['status' => true, 'songs' => $songs];
+            $artists = []; 
+
+            foreach ($artist_results as $artist) {
+                $artists[] = [
+                    'artist_id' => $artist['id'],
+                    'artist_name' => $artist['name'],
+                    'artist_image' => $artist['picture_small'],
+                    'service_id' => $service['id'],
+                    'service_name' => $service['name'],
+                    'service_icon' => $service['icon']
+                ];
+            }
+
+            return ['status' => true, 'songs' => $songs, 'artists' => $artists];
 
         } catch (Exception $e) {
             $failure = $this->class_name.'.deezer_finder - E.02: Failure';

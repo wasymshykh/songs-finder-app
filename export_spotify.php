@@ -5,10 +5,9 @@ require_once 'app/start.php';
 $S = new Services($db);
 $P = new Playlists($db);
 
-$service_name = normal_text($_GET['s']);
 $playlist_id = normal_text($_GET['i']);
 
-$service = $S->get_service_by_name($service_name);
+$service = $S->get_service_by_name('Spotify');
 if (!$service['status']) {
     die("No service found.");
 }

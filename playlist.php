@@ -36,6 +36,13 @@ if (isset($_GET) && !empty($_GET) && isset($_GET['i']) && !empty(normal_text($_G
     move('playlists.php');
 }
 
+$S = new Services($db);
+$services = $S->services;
+if ($services['status']) {
+    $services = $services['data'];
+} else {
+    $services = [];
+}
 
 $artists = [];
 foreach ($playlist_tracks as $artist) {

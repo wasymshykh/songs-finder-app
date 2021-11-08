@@ -17,12 +17,13 @@ $errors = [];
 if (isset($_POST) && !empty($_POST)) {
 
     $songs = [];
+    $artists = [];
     
     $_service = $services->get_service_by_name('Spotify');
     if ($_service['status']) {
         $_service = $_service['data'];
 
-        if ($_service['mservice_status'] === 'Y') {
+        if ($_service['mservice_status'] === 'Y' && $_service['mservice_enable_search'] === 'Y') {
             $token = $services->get_access_token_of_service($_service['mservice_id'], true);
             if ($token['status']) {
                 $token = $token['data'];
@@ -30,12 +31,9 @@ if (isset($_POST) && !empty($_POST)) {
                 $results = $finder->spotify_finder($_POST['search'], $token['atoken_token'], service_simple_data_array($_service));
                 if ($results['status']) {
                     $songs = array_merge($songs, $results['songs']);
-                } else {
-                    $errors[] = "Unable to find songs";
+                    $artists = array_merge($artists, $results['artists']);
                 }
             }
-        } else {
-            $errors[] = "Spotify service is disabled";
         }
     
     } else {
@@ -46,17 +44,14 @@ if (isset($_POST) && !empty($_POST)) {
     if ($_service['status']) {
         $_service = $_service['data'];
 
-        if ($_service['mservice_status'] === 'Y') {
+        if ($_service['mservice_status'] === 'Y' && $_service['mservice_enable_search'] === 'Y') {
 
             $results = $finder->deezer_finder($_POST['search'], service_simple_data_array($_service));
             if ($results['status']) {
                 $songs = array_merge($songs, $results['songs']);
-            } else {
-                $errors[] = "Unable to find songs";
+                $artists = array_merge($artists, $results['artists']);
             }
 
-        } else {
-            $errors[] = "Deezer service is disabled";
         }
 
     } else {
@@ -67,23 +62,18 @@ if (isset($_POST) && !empty($_POST)) {
     if ($_service['status']) {
         $_service = $_service['data'];
 
-        if ($_service['mservice_status'] === 'Y') {
+        if ($_service['mservice_status'] === 'Y' && $_service['mservice_enable_search'] === 'Y') {
 
             $results = $finder->youtube_finder($_POST['search'], $_service['mservice_api_key'], service_simple_data_array($_service));
             if ($results['status']) {
                 $songs = array_merge($songs, $results['songs']);
-            } else {
-                $errors[] = "Unable to find songs";
             }
 
-        } else {
-            $errors[] = "Youtube service is disabled";
         }
 
     } else {
         $errors[] = "Youtube service not found";
     }
-
     
     if (empty($errors)) {
         $result = $caches->add_search_results($songs);
