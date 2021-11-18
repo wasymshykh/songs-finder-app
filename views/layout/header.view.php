@@ -37,6 +37,9 @@
                 <div class="col-auto">
                     <ul class="navbar-nav">
                         <li class="nav-item">
+                            <a href="<?=href('index')?>" class="nav-link"><i class="fas fa-home pe-1"></i></a>
+                        </li>
+                        <li class="nav-item ms-2">
                             <a href="<?=href('playlists')?>" class="nav-link"><i class="fas fa-music pe-1"></i> Playlists</a>
                         </li>
                         <li class="nav-item ms-2">

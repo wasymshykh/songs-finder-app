@@ -84,24 +84,24 @@
                                 <h4><i class="fas fa-user-tie me-2"></i> Artists</h4>
                             </div>
 
-                            <?php foreach ($artists as $song): ?>
+                            <?php foreach ($artists as $artist): ?>
                             <div class="col-md-4">
                                 <div class="row px-2 py-2 m-0 gy-0 gx-2 search-result">
-                                    <div class="col-auto search-artist-img">
+                                    <a href="<?=href('artist.php?i='.$artist['artist_id'], false)?>" target="blank" class="col-auto search-artist-img">
                                         <div class="search-result-img-no">
-                                            <img src="<?=$song['artist_image']?>" alt="<?=$song['artist_name']?>">
+                                            <img src="<?=$artist['artist_image']?>" alt="<?=$artist['artist_name']?>">
                                         </div>
-                                    </div>
+                                    </a>
                                     <div class="col search-result-text">
-                                        <h5><?=$song['artist_name']?></h5>
+                                        <h5><?=$artist['artist_name']?></h5>
                                         <p>Artist</p>
-                                        <?php if (!empty($song['album_name'])): ?>
-                                            <p class="search-result-album"><strong>album</strong> <?=$song['album_name']?></p>
+                                        <?php if (!empty($artist['album_name'])): ?>
+                                            <p class="search-result-album"><strong>album</strong> <?=$artist['album_name']?></p>
                                         <?php endif; ?>
 
                                         <div class="search-result-source">
                                             <div class="search-result-source-icon">
-                                                <img src="<?=$song['service_icon']?>" alt="<?=$song['service_name']?>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<?=$song['service_name']?>">
+                                                <img src="<?=$artist['service_icon']?>" alt="<?=$artist['service_name']?>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<?=$artist['service_name']?>">
                                             </div>
                                         </div>
                                     </div>

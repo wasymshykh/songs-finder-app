@@ -185,6 +185,23 @@ class Caches
         return ['status' => true, 'type' => 'empty'];
     }
 
+    public function get_artist_by_id ($artist_id)
+    {
+        $q = "SELECT * FROM `{$this->table_artists}` JOIN `music_services` ON `artist_mservice_id` = `mservice_id` WHERE `artist_external_id` = :i";
+        $s = $this->db->prepare($q);
+        $s->bindParam(":i", $artist_id);
+        if (!$s->execute()) {
+            $failure = $this->class_name.'.get_artist_by_id - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode($s->errorInfo()));
+            return ['status' => false, 'type' => 'query', 'data' => $failure];
+        }
+
+        if ($s->rowCount() > 0) {
+            return ['status' => true, 'data' => $s->fetch()];
+        }
+        return ['status' => false, 'type' => 'empty'];
+    }
+
     public function populate_albums ()
     {
         $q = "SELECT * FROM `{$this->table_albums}`";
@@ -516,7 +533,8 @@ class Caches
                 'service_name' => $artist['mservice_name'],
                 'service_icon' => $artist['mservice_icon'],
                 'artist_name' => $artist['artist_name'],
-                'artist_image' => $artist['artist_image']
+                'artist_image' => $artist['artist_image'],
+                'artist_id' => $artist['artist_id']
             ];
 
             $artists[] = $artist_filtered;
@@ -524,7 +542,6 @@ class Caches
 
 
         return ['tracks' => $tracks, 'artists' => $artists];
-
     }
 
 }

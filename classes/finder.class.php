@@ -113,6 +113,81 @@ class Finder
 
     }
 
+    public function spotify_search_artist_albums ($artist_id, $access_token)
+    {
+        $api = new SpotifyWebAPI\SpotifyWebAPI();
+        $api->setAccessToken($access_token);
+
+        try {
+            $results = $api->getArtistAlbums($artist_id);
+            // convert $results to associative array
+            $results = json_decode(json_encode($results), true);
+
+            if (count($results['items']) < 1) {
+                return ['status' => false];
+            }
+
+            $albums = [];
+
+            foreach ($results['items'] as $album) {
+                $album = [
+                    'album_id' => $album['id'],
+                    'album_name' => $album['name'],
+                    'album_image' => $album['images'][0]['url'],
+                    'album_release_date' => $album['release_date']
+                ];
+
+                $albums[] = $album;
+            }
+
+            return ['status' => true, 'albums' => $albums];
+        } catch (Exception $e) {
+            $failure = $this->class_name.'.spotify_search_artist_albums - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode(['message' => $e->getMessage(), 'artist_id' => $artist_id, 'access_token' => $access_token]));
+            return ['status' => false, 'type' => 'error'];
+        }
+    }
+
+    public function spotify_search_album_tracklist ($album_id, $access_token)
+    {
+        $api = new SpotifyWebAPI\SpotifyWebAPI();
+        $api->setAccessToken($access_token);
+
+        try {
+            $results = $api->getAlbumTracks($album_id);
+            // convert $results to associative array
+            $results = json_decode(json_encode($results), true);
+
+            if (count($results['items']) < 1) {
+                return ['status' => false];
+            }
+
+            $tracks = [];
+
+            foreach ($results['items'] as $track) {
+                if (empty($track['preview_url'])) { continue; }
+
+                $duration_ms = $track['duration_ms'];
+                $song_duration = str_pad(floor($duration_ms/60000), 2, '0', STR_PAD_LEFT).':'.str_pad(floor(($duration_ms%60000)/1000), 2, '0', STR_PAD_LEFT);
+
+                $t = [
+                    'track_id' => $track['id'],
+                    'track_name' => $track['name'],
+                    'track_preview' => $track['preview_url'],
+                    'track_duration' => $song_duration
+                ];
+
+                $tracks[] = $t;
+            }
+
+            return ['status' => true, 'tracks' => $tracks];
+        } catch (Exception $e) {
+            $failure = $this->class_name.'.spotify_search_album_tracklist - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode(['message' => $e->getMessage(), 'album_id' => $album_id, 'access_token' => $access_token]));
+            return ['status' => false, 'type' => 'error'];
+        }
+    }
+
     public function deezer_finder ($query, $service)
     {
         $client = new wasymshykh\DeezerAPI\DeezerAPIClient();
@@ -175,6 +250,75 @@ class Finder
         } catch (Exception $e) {
             $failure = $this->class_name.'.deezer_finder - E.02: Failure';
             $this->logs->create($this->class_name_lower, $failure, json_encode(['message' => $e->getMessage(), 'query' => $query]));
+            return ['status' => false, 'type' => 'error'];
+        }
+
+    }
+
+    public function deezer_search_artist_albums ($artist_id)
+    {
+        $client = new wasymshykh\DeezerAPI\DeezerAPIClient();
+        $api = new wasymshykh\DeezerAPI\DeezerPublicAPI($client);
+
+        try {
+            $album_results = $api->artistAlbums($artist_id);
+            $album_results = json_decode(json_encode($album_results), true);
+            $album_results = $album_results['data'];
+
+            $albums = [];
+
+            foreach ($album_results as $album) {
+                $album = [
+                    'album_id' => $album['id'],
+                    'album_name' => $album['title'],
+                    'album_image' => $album['cover_medium'],
+                    'album_release_date' => $album['release_date']
+                ];
+
+                $albums[] = $album;
+            }
+
+            return ['status' => true, 'albums' => $albums];
+
+        } catch (Exception $e) {
+            $failure = $this->class_name.'.deezer_search_artist_albums - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode(['message' => $e->getMessage(), 'artist_id' => $artist_id]));
+            return ['status' => false, 'type' => 'error'];
+        }
+
+    }
+
+    public function deezer_search_album_tracklist ($album_id)
+    {
+        $client = new wasymshykh\DeezerAPI\DeezerAPIClient();
+        $api = new wasymshykh\DeezerAPI\DeezerPublicAPI($client);
+
+        try {
+            $tracks_results = $api->albumTracks($album_id);
+            $tracks_results = json_decode(json_encode($tracks_results), true);
+            $tracks_results = $tracks_results['data'];
+
+            $tracks = [];
+
+            foreach ($tracks_results as $track) {
+                $duration_s = $track['duration'];
+                $song_duration = str_pad(floor($duration_s/60), 2, '0', STR_PAD_LEFT).':'.str_pad(floor(($duration_s%60)), 2, '0', STR_PAD_LEFT);
+
+                $t = [
+                    'track_id' => $track['id'],
+                    'track_name' => $track['title_short'],
+                    'track_preview' => $track['preview'],
+                    'track_duration' => $song_duration
+                ];
+
+                $tracks[] = $t;
+            }
+
+            return ['status' => true, 'tracks' => $tracks];
+
+        } catch (Exception $e) {
+            $failure = $this->class_name.'.deezer_search_album_tracklist - E.02: Failure';
+            $this->logs->create($this->class_name_lower, $failure, json_encode(['message' => $e->getMessage(), 'album_id' => $album_id]));
             return ['status' => false, 'type' => 'error'];
         }
 
